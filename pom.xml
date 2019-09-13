@@ -61,15 +61,15 @@
         <jaxb2-commons-lang.version>2.4</jaxb2-commons-lang.version>
         <commons-lang3.version>3.5</commons-lang3.version>
         <cxf-xjc.version>3.3.0</cxf-xjc.version>
-        <jaxb-version>2.3.0.1</jaxb-version>
+        <jaxb2-basics.version>0.12.0</jaxb2-basics.version>
     </properties>
 
     <scm>
         <connection>scm:git:ssh://git@github.com/entur/netex-java-model.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/entur/netex-java-model.git</developerConnection>
         <url>https://github.com/entur/netex-java-model/tree/master</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <organization>
         <name>Entur AS</name>
@@ -85,21 +85,6 @@
     </distributionManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <version>${jaxb-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-xjc</artifactId>
-            <version>${jaxb-version}</version>
-        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -136,6 +121,11 @@
             <groupId>org.apache.cxf.xjc-utils</groupId>
             <artifactId>cxf-xjc-runtime</artifactId>
             <version>${cxf-xjc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jvnet.jaxb2_commons</groupId>
+            <artifactId>jaxb2-basics-runtime</artifactId>
+            <version>${jaxb2-basics.version}</version>
         </dependency>
     </dependencies>
 
@@ -203,38 +193,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <!-- This downloads 1.07 for validation needs. This is not used to generate the model -->
-                        <id>download-extract-legacy-1.07</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <environmentVariables>
-                                <GITHUB_URL>https://github.com/entur/NeTEx-XML-deprecated/archive/1.07.zip</GITHUB_URL>
-                                <DESTINATION_PATH>src/main/resources/xsd/1.07</DESTINATION_PATH>
-                                <ZIP_PATH_TO_EXTRACT>NeTEx-XML-deprecated-1.07/schema/xsd/*</ZIP_PATH_TO_EXTRACT>
-                            </environmentVariables>
-                            <executable>./bin/netex-download-extract.sh</executable>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <!-- This downloads 1.04beta for validation needs. This is not used to generate the model -->
-                        <id>download-extract-legacy-1.04beta</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <environmentVariables>
-                                <GITHUB_URL>https://github.com/entur/NeTEx-XML-deprecated/archive/1.04beta.zip</GITHUB_URL>
-                                <DESTINATION_PATH>src/main/resources/xsd/1.04beta</DESTINATION_PATH>
-                                <ZIP_PATH_TO_EXTRACT>NeTEx-XML-deprecated-1.04beta/schema/xsd/*</ZIP_PATH_TO_EXTRACT>
-                            </environmentVariables>
-                            <executable>./bin/netex-download-extract.sh</executable>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>annotation-removal</id>
                         <phase>generate-sources</phase>
                         <goals>
@@ -256,7 +214,7 @@
                 <configuration>
                     <extensions>
                         <extension>net.java.dev.jaxb2-commons:jaxb-fluent-api:${jaxb.fluent.api.version}</extension>
-                        <extension>org.apache.cxf.xjcplugins:cxf-xjc-ts:${cxf-xjc.version}</extension>
+                                     <extension>org.apache.cxf.xjcplugins:cxf-xjc-ts:${cxf-xjc.version}</extension>
                     </extensions>
                 </configuration>
                 <executions>
@@ -278,6 +236,10 @@
                                         <extensionArg>-Xbug986</extensionArg>
                                         <extensionArg>-Xfluent-api</extensionArg>
                                         <extensionArg>-Xts:style:org.rutebanken.netex.OmitNullsToStringStyle.INSTANCE</extensionArg>
+                                        <extensionArg>-Xequals</extensionArg>
+                                        <extensionArg>-XhashCode</extensionArg>
+                                        <extensionArg>-Xcopyable</extensionArg>
+                                        <extensionArg>-Xmergeable</extensionArg>
                                     </extensionArgs>
                                 </xsdOption>
                             </xsdOptions>
@@ -290,15 +252,20 @@
                         <artifactId>cxf-xjc-bug986</artifactId>
                         <version>${cxf.xjc.plugin.version}</version>
                     </dependency>
+                    <dependency>
+                        <groupId>org.jvnet.jaxb2_commons</groupId>
+                        <artifactId>jaxb2-basics</artifactId>
+                        <version>${jaxb2-basics.version}</version>
+                    </dependency>
                 </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>3.5.1</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <encoding>UTF-8</encoding>
                     <compilerArgs>
                         <!--arg>-Werror</arg-->
@@ -361,6 +328,7 @@
                             <version>2.22.1</version>
                             <configuration>
                                 <useSystemClassLoader>false</useSystemClassLoader>
+                                <argLine>-Xmx1024m</argLine>
                             </configuration>
                         </plugin>
                     </plugins>
